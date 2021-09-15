@@ -1,0 +1,36 @@
+[package]
+name = "retroqwest"
+version = "0.0.0"
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[lib]
+
+[dependencies]
+async-trait = "0"
+thiserror = "1.0"
+
+[features]
+derive = ["retroqwest-derive"]
+default = ["derive"]
+
+[dependencies.retroqwest-derive]
+version = "0.0.0"
+path = "retroqwest-derive"
+optional = true
+
+[dependencies.reqwest]
+version = "0.11"
+features = ["json"]
+
+[dev-dependencies]
+wiremock = "0.5.7"
+tokio = { version = "1", features = ["full"] }
+
+[dev-dependencies.serde]
+version = "1.0"
+features = ["derive"]
+
+[workspace]
+members = ["retroqwest-derive"]
