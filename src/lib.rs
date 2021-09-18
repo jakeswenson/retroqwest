@@ -1,3 +1,6 @@
+pub use reqwest;
+pub use async_trait;
+
 #[cfg(feature = "retroqwest-derive")]
 pub use retroqwest_derive::retroqwest;
 

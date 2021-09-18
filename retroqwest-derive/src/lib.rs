@@ -197,7 +197,7 @@ fn expand(mut def: ItemTrait) -> Result<proc_macro2::TokenStream, syn::Error> {
       #[derive(Clone, Debug)]
       #vis struct #name {
         endpoint: String,
-        client: reqwest::Client,
+        client: retroqwest::reqwest::Client,
       }
 
       #[async_trait::async_trait]
@@ -208,7 +208,7 @@ fn expand(mut def: ItemTrait) -> Result<proc_macro2::TokenStream, syn::Error> {
       impl #name {
         fn from_builder<T: Into<String>>(
           base_url: T,
-          client_builder: reqwest::ClientBuilder)
+          client_builder: retroqwest::reqwest::ClientBuilder)
         -> Result<Self, retroqwest::RetroqwestError>  {
           Ok(Self {
             endpoint: base_url.into().trim_end_matches('/').to_string(),
@@ -218,7 +218,7 @@ fn expand(mut def: ItemTrait) -> Result<proc_macro2::TokenStream, syn::Error> {
       }
     };
 
-  def.attrs.push(parse_quote!(#[async_trait::async_trait]));
+  def.attrs.push(parse_quote!(#[retroqwest::async_trait::async_trait]));
 
   Ok(quote! {
       #def
