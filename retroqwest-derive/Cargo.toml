@@ -1,6 +1,6 @@
 [package]
 name = "retroqwest-derive"
-version = "0.0.1-beta.1"
+version = "0.0.1-beta.2"
 edition = "2018"
 description = "A reqwest REST client generator."
 repository = "https://github.com/jakeswenson/retroqwest"
