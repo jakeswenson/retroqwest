@@ -48,6 +48,6 @@ jobs:
         run: cargo build --release --all-features
       - name: Cargo Publish
         run: |
-          (cd retroqwest-drive && cargo publish --token "${{secrets.crates_token}}")
+          (cd retroqwest-derive && cargo publish --token "${{secrets.crates_token}}")
           cargo publish --token "${{secrets.crates_token}}"
 
