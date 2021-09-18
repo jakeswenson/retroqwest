@@ -5,6 +5,7 @@ edition = "2018"
 description = "A reqwest REST client generator."
 repository = "https://github.com/jakeswenson/retroqwest"
 license = "MIT"
+readme = "README.md"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 

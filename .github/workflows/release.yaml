@@ -49,5 +49,7 @@ jobs:
       - name: Cargo Publish
         run: |
           (cd retroqwest-derive && cargo publish --token "${{secrets.crates_token}}")
+          echo "Giving crates.io sometime..."
+          sleep 4
           cargo publish --token "${{secrets.crates_token}}"
 
