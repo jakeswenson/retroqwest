@@ -28,6 +28,13 @@ pub trait HttpBin {
         #[query] q: bool,
         #[json] body: &HttpBinResponse,
     ) -> Result<HttpBinResponse, RetroqwestError>;
+
+    #[http::get("/anything")]
+    async fn get_multiple_queries(
+        &self,
+        #[query] q: bool,
+        #[query] q2: i32,
+    ) -> Result<HttpBinResponse, RetroqwestError>;
 }
 
 impl HttpBinClient {
@@ -107,6 +114,36 @@ async fn test_complex_post() -> Result<(), Box<dyn std::error::Error>> {
     assert_eq!(result.url, "posted".to_string());
 
     Ok(())
+}
+
+#[tokio::test]
+async fn test_multiple_query_params() -> Result<(), Box<dyn std::error::Error>> {
+  let server = wiremock::MockServer::start().await;
+
+  Mock::given(method("GET"))
+    .and(path("/anything"))
+    .and(query_param("q", "true"))
+    .and(query_param("q2", "3"))
+    .respond_with(ResponseTemplate::new(200).set_body_json(HttpBinResponse {
+      url: "multi-queries".to_string(),
+    }))
+    .mount(&server)
+    .await;
+
+
+  let client = build_client(server.uri())?;
+
+  let r = client.get_multiple_queries(true, 3).await;
+
+  if r.is_err() {
+    dbg!(server.received_requests().await);
+  }
+
+  let result: HttpBinResponse = r?;
+
+  assert_eq!(result.url, "multi-queries".to_string());
+
+  Ok(())
 }
 
 #[tokio::test]

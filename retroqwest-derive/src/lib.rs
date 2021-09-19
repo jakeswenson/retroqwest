@@ -130,7 +130,7 @@ fn build_method(
     let query_args = args
         .iter()
         .filter_map(|a| match a {
-            HttpArg::Query { name, arg, span } => Some(quote_spanned!(*span=> (#name, #arg))),
+            HttpArg::Query { name, arg, span } => Some(quote_spanned!(*span=> (#name, format!("{}", #arg)))),
             _ => None,
         })
         .collect::<Vec<_>>();
@@ -138,7 +138,7 @@ fn build_method(
     let query = if query_args.is_empty() {
         None
     } else {
-        Some(quote! { .query(&[#(#query_args)*]) })
+        Some(quote! { .query(&[#(#query_args, )*]) })
     };
 
     let body_args = args.iter().filter_map(|a| match a {
@@ -158,7 +158,10 @@ fn build_method(
           #query
           #(#body_args)*
           .send().await.map_err(retroqwest::RetroqwestError::RequestError)?
-          .error_for_status().map_err(retroqwest::RetroqwestError::ResponseError)?
+          .error_for_status().map_err(|source| retroqwest::RetroqwestError::ResponseError {
+            status: source.status().unwrap(),
+            source
+          })?
           .json().await.map_err(retroqwest::RetroqwestError::JsonParse)?)
       }
     })
@@ -171,8 +174,8 @@ fn expand(mut def: ItemTrait) -> Result<proc_macro2::TokenStream, syn::Error> {
 
     let mut methods: Vec<ImplItemMethod> = vec![];
 
-    for x in &mut def.items {
-        match x {
+    for member in &mut def.items {
+        match member {
             TraitItem::Method(TraitItemMethod {
                 attrs,
                 sig,
@@ -188,7 +191,7 @@ fn expand(mut def: ItemTrait) -> Result<proc_macro2::TokenStream, syn::Error> {
 
                 methods.push(build_method(attrs, sig)?)
             }
-            _ => (),
+            a => return Err(syn::Error::new(a.span(), "Only trait methods are supported on a retroqwest trait")),
         }
     }
 

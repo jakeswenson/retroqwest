@@ -12,8 +12,8 @@ pub enum RetroqwestError {
     #[error("Error sending request: {0}")]
     RequestError(#[source] reqwest::Error),
 
-    #[error("Response status code indicates error: {0}")]
-    ResponseError(#[source] reqwest::Error),
+    #[error("Response status code ({status}) indicates error: {source}")]
+    ResponseError { status: reqwest::StatusCode, #[source] source: reqwest::Error },
 
     #[error("Failed to parse json: {0}")]
     JsonParse(#[source] reqwest::Error),
