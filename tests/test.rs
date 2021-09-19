@@ -158,16 +158,13 @@ async fn test_get_errors() -> Result<(), Box<dyn std::error::Error>> {
 
     let client = build_client(server.uri())?;
 
-    let result: String = client
+    let result = client
         .get_by_name("test".to_string())
         .await
         .err()
-        .unwrap()
-        .to_string();
+        .unwrap();
 
-    assert!(result.starts_with(
-        "Response status code indicates error: HTTP status client error (400 Bad Request)"
-    ));
+    assert!(matches!(result, RetroqwestError::ResponseError {..}));
 
     Ok(())
 }
