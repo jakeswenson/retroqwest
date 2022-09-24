@@ -17,7 +17,7 @@ json = ["reqwest/json"]
 default = ["derive", "json"]
 
 [dependencies]
-async-trait = "0"
+async-trait = "0.1"
 thiserror = "1.0"
 reqwest = "0.11"
 
